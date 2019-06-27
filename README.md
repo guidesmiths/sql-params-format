@@ -1,4 +1,4 @@
-# module-tsl-sql-format
+# sql-format
 
 a wrapper around pg-format to allow named parameters to sql queries.
 
