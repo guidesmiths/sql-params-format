@@ -1,8 +1,8 @@
-import moment from 'moment';
-import pgFormat from 'pg-format';
-import R from 'ramda';
-import { readFileSync } from 'fs';
-import p from 'path';
+const moment = require('moment');
+const pgFormat = require('pg-format');
+const R = require('ramda');
+const { readFileSync } = require('fs');
+const p = require('path');
 
 const demomentify = (obj) => (obj instanceof moment ? obj.toDate() : obj);
 const loadFile = R.curry((path, file) => readFileSync(p.resolve(path, `${file}.sql`), 'utf8'));
@@ -65,10 +65,11 @@ const formatFile = (sqlFile, namedParams) => {
   return format(fileSql, namedParams);
 };
 
-exports = module.exports = format;
-exports.format = format;
-exports.formatFile = formatFile;
-exports.withArray = withArray;
-exports.ident = pgFormat.ident;
-exports.literal = ourEscape(pgFormat.literal);
-exports.string = ourEscape(pgFormat.string);
+module.exports = {
+  format,
+  formatFile,
+  ident: pgFormat.ident,
+  formatLiteral: ourEscape(pgFormat.literal),
+  formatString: ourEscape(pgFormat.string),
+};
+

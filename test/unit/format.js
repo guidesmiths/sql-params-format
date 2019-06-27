@@ -1,8 +1,7 @@
-import assert from 'assert';
-import moment from 'moment';
-import {format, formatFile} from '../../index';
-
-
+const assert = require('assert');
+const moment = require('moment');
+const { join } = require('path');
+const { format, formatFile, formatString, formatLiteral } = require('../../index');
 
 describe('formatter', () => {
   it('should maintain basic pg formatting', () => {
@@ -14,39 +13,39 @@ describe('formatter', () => {
   it('should do basic named formatting', () => {
     const sql = 'insert into %I:one (select * from foo where %s:two and bar > %L:three)';
     const fmt = 'insert into a_table (select * from foo where something=another and bar > \'123\')';
-    assert.equal(fmt, format(sql, {one: 'a_table', two: 'something=another', three: 123}));
+    assert.equal(fmt, format(sql, { one: 'a_table', two: 'something=another', three: 123 }));
   });
 
   it('should do complex named formatting', () => {
     const sql = '%I:one %s:one %L:one - %I:two %s:two %L:two - %I:one %s:one %L:one )';
     const fmt = 'one one \'one\' - two two \'two\' - one one \'one\' )';
-    assert.equal(fmt, format(sql, {one: 'one', two: 'two'}));
+    assert.equal(fmt, format(sql, { one: 'one', two: 'two' }));
   });
 
   it('should ignore extra params', () => {
     const sql = '%I:one %s:one %L:one - %I:two %s:two %L:two - %I:one %s:one %L:one )';
     const fmt = 'one one \'one\' - two two \'two\' - one one \'one\' )';
-    assert.equal(fmt, format(sql, {one: 'one', two: 'two', three: 'three', four: 'four'}));
+    assert.equal(fmt, format(sql, { one: 'one', two: 'two', three: 'three', four: 'four' }));
   });
 
   it('should be ok when using :: to cast types', () => {
     const sql = 'SELECT event_time::DATE WHERE asset_type=%L:type';
     const fmt = 'SELECT event_time::DATE WHERE asset_type=\'foo\'';
-    assert.equal(fmt, format(sql, {type: 'foo'}));
+    assert.equal(fmt, format(sql, { type: 'foo' }));
   });
 
   it('should handle underscores in variable names', () => {
     const sql = 'SELECT event_time::DATE WHERE asset_type=%L:t_y_p_e';
     const fmt = 'SELECT event_time::DATE WHERE asset_type=\'foo\'';
-    assert.equal(fmt, format(sql, {t_y_p_e: 'foo'}));
+    assert.equal(fmt, format(sql, { t_y_p_e: 'foo' }));
   });
 
   it('should handle converting moment objects to dates', () => {
     const startTime = moment().utc();
 
     const sql = 'SELECT * FROM foo WHERE event_time >= %L:startTime';
-    const momentFormat = format(sql, {startTime});
-    const dateFormat = format(sql, {startTime: startTime.toDate()});
+    const momentFormat = format(sql, { startTime });
+    const dateFormat = format(sql, { startTime: startTime.toDate() });
     assert.equal(momentFormat, dateFormat);
   });
 
@@ -73,7 +72,7 @@ describe('formatter', () => {
       enabled: true,
       sample_clause: 'event = \'view\' AND asset_type = \'resource\' AND licence_type=\'TES-PAID\'',
       conversion_clause: 'event = \'buy\' AND asset_type = \'resource\'',
-      eventStream: 'event_stream'
+      eventStream: 'event_stream',
     };
     const fmt = `INSERT INTO experiments_daily_build_20160901_1934_1 (
   SELECT
@@ -94,32 +93,32 @@ describe('formatter', () => {
   });
 
   it('should format literals', () => {
-    assert.equal(format.literal(123), '\'123\'');
+    assert.equal(formatLiteral(123), '\'123\'');
   });
 
   it('should format moment literals', () => {
     const now = moment();
-    assert.equal(format.literal(now), format.literal(now.toDate()));
+    assert.equal(formatLiteral(now), formatLiteral(now.toDate()));
   });
 
   it('should format strings', () => {
-    assert.equal(format.string(123), '123');
+    assert.equal(formatString(123), '123');
   });
 
   it('should format moment strings', () => {
     const now = moment();
-    assert.equal(format.string(now), format.string(now.toDate()));
+    assert.equal(formatString(now), formatString(now.toDate()));
   });
 
   it('should handle includes', () => {
     const sample = 'dear_sir';
-    const formatted = formatFile(__dirname + '/sample.sql', {sample});
+    const formatted = formatFile(join(__dirname, '/sample.sql'), { sample });
 
     assert.equal(formatted, 'WITH foobar AS (SELECT * FROM dear_sir) SELECT * FROM dear_sir');
   });
 
   it('should format literals, stripping null characters', () => {
-    assert.equal(format.literal('ab\0c'), '\'abc\'');
+    assert.equal(formatLiteral('ab\0c'), '\'abc\'');
   });
 
   it('should maintain basic pg formatting while escaping null characters', () => {
