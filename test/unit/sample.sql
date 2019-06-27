@@ -1,0 +1,1 @@
+WITH %F:sample_include SELECT * FROM %I:sample
