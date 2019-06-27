@@ -1,9 +1,8 @@
 {
   "name": "sql-params-format",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Formatter for named sql params",
-  "main": "lib/index.js",
-  "es6:main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha && echo '***ES5***' && cross-env BABEL_ENV=es5 mocha",
     "lint": "eslint src",

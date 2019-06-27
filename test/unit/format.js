@@ -1,6 +1,6 @@
 import assert from 'assert';
 import moment from 'moment';
-import {format, formatFile} from '../../src/index';
+import {format, formatFile} from '../../index';
 
 
 
