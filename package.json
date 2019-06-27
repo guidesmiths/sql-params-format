@@ -1,5 +1,5 @@
 {
-  "name": "sql-format",
+  "name": "sql-params-format",
   "version": "0.0.1",
   "description": "Formatter for named sql params",
   "main": "lib/index.js",

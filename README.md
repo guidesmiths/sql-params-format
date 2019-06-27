@@ -1,4 +1,4 @@
-# sql-format
+# sql-params-format
 
 a wrapper around pg-format to allow named parameters to sql queries.
 
@@ -13,7 +13,7 @@ const formatted = format(sql, 'a_table', 'something=another', 123);
 const sql = 'insert into %I:one (select * from foo where %s:two and bar > %L:three)';
 const formatted = format(sql, {one: 'a_table', two: 'something=another', three: 123});
   formatted => insert into a_table (select * from foo where something=another and bar > '123')
-    
+
 ```
 
 It will ignore any unused named parameters.
