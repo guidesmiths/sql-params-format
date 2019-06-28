@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 const { join } = require('path');
-const { format, formatFile, formatString, formatLiteral } = require('../../index');
+const { format, formatFile } = require('../../index');
 
 describe('formatter', () => {
   it('should maintain basic pg formatting', () => {
@@ -93,21 +93,21 @@ describe('formatter', () => {
   });
 
   it('should format literals', () => {
-    assert.equal(formatLiteral(123), '\'123\'');
+    assert.equal(format.literal(123), '\'123\'');
   });
 
   it('should format moment literals', () => {
     const now = moment();
-    assert.equal(formatLiteral(now), formatLiteral(now.toDate()));
+    assert.equal(format.literal(now), format.literal(now.toDate()));
   });
 
   it('should format strings', () => {
-    assert.equal(formatString(123), '123');
+    assert.equal(format.string(123), '123');
   });
 
   it('should format moment strings', () => {
     const now = moment();
-    assert.equal(formatString(now), formatString(now.toDate()));
+    assert.equal(format.string(now), format.string(now.toDate()));
   });
 
   it('should handle includes', () => {
@@ -118,7 +118,7 @@ describe('formatter', () => {
   });
 
   it('should format literals, stripping null characters', () => {
-    assert.equal(formatLiteral('ab\0c'), '\'abc\'');
+    assert.equal(format.literal('ab\0c'), '\'abc\'');
   });
 
   it('should maintain basic pg formatting while escaping null characters', () => {

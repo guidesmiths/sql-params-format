@@ -47,7 +47,7 @@ const processNamedParams = (rawSql, params) => {
 
 const withArray = (sql, args) => cleanEscaped(pgFormat.withArray(sql, R.map(demomentify, args)));
 
-function format(sql, ...args) {
+const format = (sql, ...args) => {
   let returnVal;
   if (R.is(Object, args[0])) {
     returnVal = R.apply(withArray, processNamedParams(sql, args[0]));
@@ -56,7 +56,7 @@ function format(sql, ...args) {
   }
 
   return returnVal;
-}
+};
 
 const formatFile = (sqlFile, namedParams) => {
   const sql = readFileSync(sqlFile, 'utf8');
@@ -65,11 +65,13 @@ const formatFile = (sqlFile, namedParams) => {
   return format(fileSql, namedParams);
 };
 
+format.ident = pgFormat.ident;
+format.literal = ourEscape(pgFormat.literal);
+format.string = ourEscape(pgFormat.string);
+format.withArray = withArray;
+
 module.exports = {
   format,
   formatFile,
-  ident: pgFormat.ident,
-  formatLiteral: ourEscape(pgFormat.literal),
-  formatString: ourEscape(pgFormat.string),
 };
 
